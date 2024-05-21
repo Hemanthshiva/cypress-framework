@@ -1,0 +1,28 @@
+{
+    "compilerOptions": {
+        "baseUrl": "./",
+        "paths": {
+            "@cypress-cucumber-preprocessor/steps": [
+                "./cypress/e2e/cucumber-tests/*.ts"
+            ]
+        },
+        "target": "es5",
+        "module": "commonjs",
+        "lib": [
+            "es5",
+            "dom"
+        ],
+        "types": [
+            "cypress",
+            "node"
+        ]
+    },
+    "include": [
+        "**/*.ts"
+    ],
+    "exclude": [
+        "node_modules/**/*",
+        "out/**/*",
+        "example/**/*"
+    ]
+}
