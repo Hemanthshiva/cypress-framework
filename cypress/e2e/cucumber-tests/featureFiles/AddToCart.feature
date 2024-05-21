@@ -11,14 +11,13 @@ Feature: Add products to Cart
         And Clicks on the login button
         Then User should land on the "/inventory" page
 
-
     Scenario: Sort products in low to high price order and verify
         When User selects "Price (low to high)" from the sort by dropdown
         Then Products should be sorted in below order
             | first             | last                     |
             | Sauce Labs Onesie | Sauce Labs Fleece Jacket |
 
-
+    @test
     Scenario: Add product to cart and proceed to checkout
         When User adds "Sauce Labs Backpack" to the cart
         And User adds "Sauce Labs Onesie" to the cart
@@ -29,8 +28,8 @@ Feature: Add products to Cart
         When User clicks on the checkout button
         Then User should land on the "/checkout-step-one" page
         And User should fill personal details
-        | firstName | lastName | zipCode |
-        | John      | Doe      | 12345   |
+            | firstName | lastName | zipCode |
+            | John      | Doe      | 12345   |
         When User clicks on the continue button
         Then User should land on the "/checkout-step-two" page
         And User should verify the payment details
