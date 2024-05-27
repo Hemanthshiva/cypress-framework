@@ -1,6 +1,6 @@
 import { Given, When, Then } from "cypress-cucumber-preprocessor/steps";
 
-const baseApiEndpoint = "https://reqres.in/api";
+const baseApiEndpoint = Cypress.env('apiBaseUrl');
 
 let requestBody: any;
 let response: Cypress.Response<any>;

@@ -20,7 +20,11 @@ module.exports = defineConfig({
       };
       on("file:preprocessor", cucumber(options));
     },
-    baseUrl: 'https://www.saucedemo.com/',
+    env:{
+      baseUrl: 'https://www.saucedemo.com/',
+      apiBaseUrl: 'https://reqres.in/api'
+    },
+    // baseUrl: 'https://www.saucedemo.com/',
     chromeWebSecurity: false,
     defaultCommandTimeout: 5000,
     requestTimeout: 5000,

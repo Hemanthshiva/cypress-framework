@@ -2,13 +2,21 @@ import { BasePage } from "./BasePage";
 
 export class LoginPage extends BasePage {
 
+    locators = {
+        username: '[data-test="username"]',
+        password: '[data-test="password"]',
+        loginButton: '[data-test="login-button"]',
+        errorMessage: '[data-test="error"]'
+    }
+
+
     navigateToLoginPage() {
-        this.navigateTo('/');
+        this.navigateTo(Cypress.env('baseUrl'));
     }
 
     enterCredentials(username: string, password: string) {
-        const usernameInput = cy.get('[data-test="username"]');
-        const passwordInput = cy.get('[data-test="password"]');
+        const usernameInput = cy.get(this.locators.username);
+        const passwordInput = cy.get(this.locators.password);
 
         if (username.length !== 0) {
             usernameInput.type(username, { force: true });
@@ -20,10 +28,10 @@ export class LoginPage extends BasePage {
     }
 
     clickLoginButton() {
-        cy.get('[data-test="login-button"]').click();
+        cy.get(this.locators.loginButton).click();
     }
 
     verifyErrorMessage(errorMessage: string) {
-        cy.get('[data-test="error"]').should('contain.text', errorMessage);
+        cy.get(this.locators.errorMessage).should('contain.text', errorMessage);
     }
 }

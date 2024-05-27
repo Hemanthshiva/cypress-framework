@@ -3,8 +3,17 @@ import { DataTable } from 'cucumber';
 
 export class ProductsPage extends BasePage {
 
+    locators = {    
+        productSortContainer: '[data-test="product-sort-container"]',
+        inventoryItemName: '[data-test="inventory-item-name"]',
+        inventoryItemPrice: '[data-test="inventory-item-price"]',
+        inventoryItemAddButton: '.btn_primary',
+        shoppingCartBadge: '[data-test="shopping-cart-badge"]',
+        shoppingCartLink: '[data-test="shopping-cart-link"]'
+    };
+
     sortProductsBy(option: string) {
-        cy.get('[data-test="product-sort-container"]').select(option);
+        cy.get(this.locators.productSortContainer).select(option);
     }
 
     verifyProductsSorted(dataTable: DataTable) {
@@ -23,19 +32,19 @@ export class ProductsPage extends BasePage {
     }
 
     addProductToCart(product: string) {
-        cy.get('[data-test="inventory-item-name"]').contains(product)
+        cy.get(this.locators.inventoryItemName).contains(product)
             .parentsUntil('.inventory_item').find('.btn_primary').click();
     }
 
     verifyProductAddedToCart() {
-        cy.get('[data-test="shopping-cart-badge"]').should('be.visible');
+        cy.get(this.locators.shoppingCartBadge).should('be.visible');
     }
 
     verifyProductsInCartCount(numItems: string) {
-        cy.get('[data-test="shopping-cart-badge"]').should('have.text', numItems);
+        cy.get(this.locators.shoppingCartBadge).should('have.text', numItems);
     }
 
     navigateToCart() {
-        cy.get('[data-test="shopping-cart-link"]').click();
+        cy.get(this.locators.shoppingCartLink).click();
     }
 }
