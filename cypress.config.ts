@@ -7,6 +7,13 @@ module.exports = defineConfig({
   projectId: 'hsdwg5',
   e2e: {
     setupNodeEvents(on, config) {
+      // on("before:browser:launch", (browser, launchOptions) => {
+      //   if (browser.name === "chrome") {
+      //     launchOptions.args.push("--incognito=true");
+      //   }
+      //   return launchOptions;
+      // });
+
       const options = {
         ...browserify.defaultOptions,
         typescript: resolve.sync('typescript', { basedir: config.projectRoot }),
@@ -22,7 +29,7 @@ module.exports = defineConfig({
       openMode: 0
     },
     video: false,
-    specPattern: "cypress/e2e/**/**/*.feature",
+    specPattern: "cypress/e2e/**/**/*.{feature,spec.ts}",
   },
   reporter: 'cypress-mochawesome-reporter',
 });

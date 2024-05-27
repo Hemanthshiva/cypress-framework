@@ -15,5 +15,6 @@
 
 // Import commands.js using ES2015 syntax:
 import './commands'
+import 'cypress-iframe'
 
 module.exports = (on: any, config: any) => require('cypress-mochawesome-reporter/plugin')(on, config);
