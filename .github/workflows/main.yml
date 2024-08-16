@@ -63,7 +63,7 @@ jobs:
           DEBUG: 'cypress:server:args'
 
       - name: 'Generate report'
-        if: steps.test.outcome == success()
+        if: success() || failure()
         run: yarn cy:report
 
       - name: 'Upload report'
