@@ -11,7 +11,7 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-  
+
       - name: Cypress install
         uses: cypress-io/github-action@v6.5.0
         with:
@@ -36,22 +36,22 @@ jobs:
       fail-fast: false
       matrix:
         # run copies of the current job in parallel
-        containers: [1, 2, 3,]
+        containers: [1, 2, 3]
     steps:
       - name: Checkout
         uses: actions/checkout@v4
 
       - name: Node info
         run: node -v
-        
-      - name: "UI Tests - Chrome"
+
+      - name: 'UI Tests - Chrome'
         uses: cypress-io/github-action@v6.5.0
         with:
           build: yarn cypress info
           browser: chrome
           record: true
           parallel: true
-          group: "UI - Chrome"
+          group: 'UI - Chrome'
           spec: cypress/e2e/cucumber-tests/featureFiles/*
           config-file: cypress.config.ts
         env:
@@ -59,4 +59,37 @@ jobs:
           # Recommended: pass the GitHub token lets this action correctly
           # determine the unique run id necessary to re-run the checks
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          DEBUG: "cypress:server:args"
+          DEBUG: 'cypress:server:args'
+
+  generate-report:
+    needs: [ui-chrome-tests]
+    if: success()
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Run Report
+        run: yarn cy:report
+      
+      - name: Upload report
+        if: always()
+        uses: actions/upload-artifact@v3
+        with: 
+          name: cypress-report
+          path: cypress/cucumber-html-report
+
+  deploy-reports:
+    needs: [generate-report]
+    if: success()
+    runs-on: ubuntu-latest
+    steps:
+      - name: Setup Github report page
+        uses: actions/configure-pages@v5.0.0
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v3.0.1
+        with: 
+          path: cypress/cucumber-html-report/
+      - name: Deploy to Github Pages
+        id: deployment
+        uses: actions/deploy-pages@v4.0.5 
