@@ -45,7 +45,7 @@ jobs:
         run: node -v
         
       - name: "UI Tests - Chrome"
-        uses: cypress-io/github-action@v6
+        uses: cypress-io/github-action@v6.5.0
         with:
           build: yarn cypress info
           browser: chrome
