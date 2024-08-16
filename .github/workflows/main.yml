@@ -62,13 +62,14 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           DEBUG: 'cypress:server:args'
 
-      - name: Wait for other checks to succeed
+      - name: Wait for tests to succeed
         uses: lewagon/wait-on-check-action@v1.3.4
         with:
           ref: ${{ github.ref }}
-          running-workflow-name: 'UI Tests - Chrome'
+          check-name: 'UI Tests - Chrome'
           repo-token: ${{ secrets.GITHUB_TOKEN }}
-          wait-interval: 20
+          wait-interval: 10
+          allowed-conclusions: success,skipped,cancelled,failed
 
       - name: 'Generate report'
         if: success() || failure()
