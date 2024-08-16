@@ -4,7 +4,7 @@ import resolve = require("resolve");
 const cucumber = require("cypress-cucumber-preprocessor").default;
 
 module.exports = defineConfig({
-  projectId: 'hsdwg5',
+  projectId: "nud36k",
   e2e: {
     setupNodeEvents(on, config) {
       const options = {
