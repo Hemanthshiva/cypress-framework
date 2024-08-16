@@ -10,7 +10,8 @@
     "cy:run:headless": "cypress run",
     "cy:run:with:test:tag": "cypress run --spec cypress/e2e/cucumber-tests/featureFiles/*.feature --headed --browser chrome --env TAGS=@test",
     "cy:report": "node ./cypress/report.ts",
-    "cy:parallel": "cypress-parallel -s cy:run:on:chrome -t 3 -d cypress/e2e/cucumber-tests/featureFiles/*.feature"
+    "cy:parallel": "cypress-parallel -s cy:run:on:chrome -d cypress/e2e/cucumber-tests/featureFiles/*.feature"
+
   },
   "author": "Hemanth Shivashankarappa",
   "license": "ISC",

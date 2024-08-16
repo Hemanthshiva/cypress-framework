@@ -55,12 +55,22 @@ jobs:
           group: 'UI - Chrome'
           spec: cypress/e2e/cucumber-tests/featureFiles/*
           config-file: cypress.config.ts
+      - name: 'Run Tests'
+        run: yarn cy:parallel
         env:
           CYPRESS_RECORD_KEY: ${{ secrets.CYPRESS_RECORD_KEY }}
           # Recommended: pass the GitHub token lets this action correctly
           # determine the unique run id necessary to re-run the checks
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           DEBUG: 'cypress:server:args'
+
+      - name: Wait for other checks to succeed
+        uses: lewagon/wait-on-check-action@v1.3.4
+        with:
+          ref: ${{ github.ref }}
+          running-workflow-name: 'Run Tests'
+          repo-token: ${{ secrets.GITHUB_TOKEN }}
+          wait-interval: 20
 
       - name: 'Generate report'
         if: success() || failure()
@@ -116,9 +126,4 @@ jobs:
           path: cypress/cucumber-html-report/
       - name: Deploy to Github Pages
         id: deployment
-        uses: actions/deploy-pages@v4.0.5 
-        env:
-          CYPRESS_RECORD_KEY: ${{ secrets.CYPRESS_RECORD_KEY }}
-          # Recommended: pass the GitHub token lets this action correctly
-          # determine the unique run id necessary to re-run the checks
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        uses: actions/deploy-pages@v4.0.5
