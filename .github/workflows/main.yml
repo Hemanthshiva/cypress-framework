@@ -46,16 +46,16 @@ jobs:
 
       - name: 'UI Tests - Chrome'
         id: test
-        uses: cypress-io/github-action@v6.5.0
-        with:
-          build: yarn cypress info
-          browser: chrome
-          record: true
-          parallel: true
-          group: 'UI - Chrome'
-          spec: cypress/e2e/cucumber-tests/featureFiles/*
-          config-file: cypress.config.ts
-      - name: 'Run Tests'
+      #   uses: cypress-io/github-action@v6.5.0
+      #   with:
+      #     build: yarn cypress info
+      #     browser: chrome
+      #     record: true
+      #     parallel: true
+      #     group: 'UI - Chrome'
+      #     spec: cypress/e2e/cucumber-tests/featureFiles/*
+      #     config-file: cypress.config.ts
+      # - name: 'Run Tests'
         run: yarn cy:parallel
         env:
           CYPRESS_RECORD_KEY: ${{ secrets.CYPRESS_RECORD_KEY }}
