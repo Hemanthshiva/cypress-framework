@@ -24,5 +24,5 @@ module.exports = defineConfig({
     video: false,
     specPattern: "cypress/e2e/**/**/*.feature",
   },
-  reporter: 'cypress-mochawesome-reporter',
+  // reporter: 'cypress-mochawesome-reporter',
 });

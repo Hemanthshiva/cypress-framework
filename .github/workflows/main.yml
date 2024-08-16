@@ -45,6 +45,7 @@ jobs:
         run: node -v
 
       - name: 'UI Tests - Chrome'
+        id: test
         uses: cypress-io/github-action@v6.5.0
         with:
           build: yarn cypress info
@@ -61,16 +62,29 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           DEBUG: 'cypress:server:args'
 
+      - name: 'Generate report'
+        if: steps.test.outcome == success()
+        run: yarn cy:report
+
+      - name: 'Upload report'
+        if: always()
+        uses: actions/upload-artifact@v3
+        with: 
+          name: cypress-report
+          path: cypress/cucumber-html-report
+
+
   generate-report:
     needs: [ui-chrome-tests]
     if: success()
     runs-on: ubuntu-latest
     
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-      - name: Run Report
-        run: yarn cy:report
+      - name: Dowload artifacts
+        uses: actions/download-artifact@v3.0.1
+        with:
+          name: ReportsData
+          path: cypress/cucumber-html-report/
       
       - name: Upload report
         if: always()
