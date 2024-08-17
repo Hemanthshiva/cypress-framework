@@ -71,6 +71,7 @@ jobs:
 
   merge-reports:
     needs: ui-chrome-tests
+    if: success() || failure()
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
