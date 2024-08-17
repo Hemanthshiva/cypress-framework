@@ -54,15 +54,11 @@ jobs:
           CYPRESS_RECORD_KEY: ${{ secrets.CYPRESS_RECORD_KEY }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Sleep for 30 seconds
-        run: sleep 30s
-        shell: bash
-      
       - name: 'Upload report'
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          # name: cypress-report-${{ matrix.containers }}
+          name: cypress-report-${{ matrix.containers }}
           path: cypress/cucumber-json/
 
   merge-reports:
@@ -83,7 +79,7 @@ jobs:
           path: cypress/json-reports
           
       - name: List Files
-        run: ls -R
+        run: cd cypress/json-reports ls -R
      
       # - name: Upload merged report
       #   uses: actions/upload-artifact@v4
