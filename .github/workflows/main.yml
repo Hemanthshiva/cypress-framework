@@ -62,7 +62,7 @@ jobs:
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: cypress-report-${{ matrix.containers }}
+          # name: cypress-report-${{ matrix.containers }}
           path: cypress/cucumber-json/
 
   merge-reports:
@@ -81,13 +81,15 @@ jobs:
         uses: actions/download-artifact@v4
         with:
           path: cypress/json-reports
-              
+          
+      - name: List Files
+        run: ls -R
      
-      - name: Upload merged report
-        uses: actions/upload-artifact@v4
-        with:
-          name: merged-cypress-report
-          path: cypress/json-reports/
+      # - name: Upload merged report
+      #   uses: actions/upload-artifact@v4
+      #   with:
+      #     name: merged-cypress-report
+      #     path: cypress/json-reports/
 
   # deploy-reports:
   #   needs: [merge-reports]
