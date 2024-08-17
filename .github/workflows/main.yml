@@ -64,7 +64,7 @@ jobs:
 
       - name: 'Upload report'
         if: always()
-        uses: actions/upload-artifact@v3
+        uses: echapmanFromBunnings/upload-artifact@3.0.0
         with:
           name: cypress-report-${{ matrix.containers }}
           path: cypress/cucumber-html-report
@@ -78,10 +78,12 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Download reports from all containers
-        uses: actions/download-artifact@v3
+        uses: aochmann/actions-download-artifact@1.0.4
         with:
           name: cypress-report-*
           path: cypress/cucumber-html-report/
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       
       # Ensure the directory exists before running the merge
       - name: Ensure Report Directory Exists
@@ -102,7 +104,7 @@ jobs:
           fi
 
       - name: Upload merged report
-        uses: actions/upload-artifact@v3
+        uses: echapmanFromBunnings/upload-artifact@3.0.0
         with:
           name: merged-cypress-report
           path: cypress/merged-report/
@@ -118,10 +120,12 @@ jobs:
 
     steps:
       - name: Download merged report
-        uses: actions/download-artifact@v3
+        uses: aochmann/actions-download-artifact@1.0.4
         with:
           name: merged-cypress-report
           path: cypress/merged-report/
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       
       - name: Setup Github report page
         uses: actions/configure-pages@v5.0.0
