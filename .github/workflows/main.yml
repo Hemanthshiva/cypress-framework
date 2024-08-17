@@ -60,7 +60,7 @@ jobs:
       
       - name: 'Upload report'
         if: always()
-        uses: echapmanFromBunnings/upload-artifact@3.0.0
+        uses: actions/upload-artifact@v3
         with:
           name: cypress-report-${{ matrix.containers }}
           path: cypress/cucumber-json/
@@ -73,66 +73,51 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
+         # Ensure the directory exists before running the merge
+      - name: Ensure Report Directory Exists
+        run: mkdir -p cypress/json-reports
+
       - name: Download reports from all containers
-        uses: aochmann/actions-download-artifact@1.0.4
+        uses: actions/download-artifact@v3
         with:
           name: cypress-report-*
-          path: cypress/merged-json/
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      
-      # Ensure the directory exists before running the merge
-      - name: Ensure Report Directory Exists
-        run: mkdir -p cypress/cucumber-report
-
-      # Here you can add a custom script to merge the reports
-      - name: Merge Cucumber Reports
-        run: |
-          yarn merge-cucumber-reports -i cypress/cucumber-html-report -o cypress/cucumber-report/cucumber-report.json
-
-      - name: Check if the merged report was generated
-        run: |
-          if [ -f cypress/cucumber-report/cucumber-report.json ]; then
-            echo "Merged report exists."
-          else
-            echo "Merged report not found!"
-            exit 1
-          fi
-
+          path: cypress/json-reports
+              
+     
       - name: Upload merged report
-        uses: echapmanFromBunnings/upload-artifact@3.0.0
+        uses: actions/upload-artifact@v3
         with:
           name: merged-cypress-report
-          path: cypress/cucumber-report/
+          path: cypress/json-reports/
 
-  deploy-reports:
-    needs: [merge-reports]
-    if: always()
-    runs-on: ubuntu-latest
+  # deploy-reports:
+  #   needs: [merge-reports]
+  #   if: always()
+  #   runs-on: ubuntu-latest
 
-    permissions:
-      id-token: write
-      pages: write
+  #   permissions:
+  #     id-token: write
+  #     pages: write
 
-    steps:
-      - name: Download merged report
-        uses: aochmann/actions-download-artifact@1.0.4
-        with:
-          name: merged-cypress-report
-          path: cypress/cucumber-report/
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+  #   steps:
+  #     - name: Download merged report
+  #       uses: aochmann/actions-download-artifact@1.0.4
+  #       with:
+  #         name: merged-cypress-report
+  #         path: cypress/cucumber-report/
+  #       env:
+  #         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       
-      - name: Setup Github report page
-        uses: actions/configure-pages@v5.0.0
+  #     - name: Setup Github report page
+  #       uses: actions/configure-pages@v5.0.0
       
-      - name: Upload artifact
-        uses: actions/upload-pages-artifact@v3.0.1
-        with:
-          path: cypress/cucumber-report/
+  #     - name: Upload artifact
+  #       uses: actions/upload-pages-artifact@v3.0.1
+  #       with:
+  #         path: cypress/cucumber-report/
       
-      - name: Deploy to Github Pages
-        id: deployment
-        uses: actions/deploy-pages@v4.0.5
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+  #     - name: Deploy to Github Pages
+  #       id: deployment
+  #       uses: actions/deploy-pages@v4.0.5
+  #       env:
+  #         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
