@@ -61,7 +61,7 @@ jobs:
           name: cypress-report-${{ matrix.containers }}
           path: cypress/cucumber-json/
 
-  merge-reports:
+  download-reports:
     needs: ui-chrome-tests
     if: success() || failure()
     runs-on: ubuntu-latest
@@ -69,17 +69,23 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-         # Ensure the directory exists before running the merge
+      # Ensure the directory exists before running the merge
       - name: Ensure Report Directory Exists
-        run: mkdir -p cypress/json-reports
+        run: mkdir -p cypress/cucumber-json
 
       - name: Download reports from all containers
         uses: actions/download-artifact@v4
         with:
           path: cypress/json-reports
-          
-      - name: List Files
-        run: cd cypress/json-reports ls -R
+
+      # Copy all JSON files to the cypress/cucumber-json directory
+      - name: Copy JSON files to the cucumber-json folder
+        run: |
+          find cypress/json-reports -type f -name "*.json" -exec cp {} cypress/cucumber-json/ \;
+
+      - name: List Files in the cucumber-json folder
+        run: ls -R cypress/cucumber-json/
+
      
       # - name: Upload merged report
       #   uses: actions/upload-artifact@v4
@@ -88,7 +94,7 @@ jobs:
       #     path: cypress/json-reports/
 
   # deploy-reports:
-  #   needs: [merge-reports]
+  #   needs: [download-reports]
   #   if: always()
   #   runs-on: ubuntu-latest
 
