@@ -36,7 +36,7 @@ jobs:
       fail-fast: false
       matrix:
         # run copies of the current job in parallel
-        containers: [1]
+        containers: [1, 2, 3]
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -69,27 +69,26 @@ jobs:
       - name: 'Upload report'
         if: always()
         uses: actions/upload-artifact@v3
-        with: 
+        with:
           name: cypress-report
           path: cypress/cucumber-html-report
-
 
   # generate-report:
   #   needs: [ui-chrome-tests]
   #   if: success()
   #   runs-on: ubuntu-latest
-    
+
   #   steps:
   #     - name: Dowload artifacts
   #       uses: actions/download-artifact@v3.0.1
   #       with:
   #         name: ReportsData
   #         path: cypress/cucumber-html-report/
-      
+
   #     - name: Upload report
   #       if: always()
   #       uses: actions/upload-artifact@v3
-  #       with: 
+  #       with:
   #         name: cypress-report
   #         path: cypress/cucumber-html-report
   #       env:
@@ -117,7 +116,7 @@ jobs:
         uses: actions/configure-pages@v5.0.0
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3.0.1
-        with: 
+        with:
           path: cypress/cucumber-html-report/
       - name: Deploy to Github Pages
         id: deployment
