@@ -29,13 +29,8 @@ jobs:
       options: --user 1001
     needs: install
     strategy:
-      # when one test fails, DO NOT cancel the other
-      # containers, because this will kill Cypress processes
-      # leaving Cypress Cloud hanging ...
-      # https://github.com/cypress-io/github-action/issues/48
       fail-fast: false
       matrix:
-        # run copies of the current job in parallel
         containers: [1, 2, 3]
     steps:
       - name: Checkout
@@ -57,14 +52,9 @@ jobs:
           config-file: cypress.config.ts
         env:
           CYPRESS_RECORD_KEY: ${{ secrets.CYPRESS_RECORD_KEY }}
-          # Recommended: pass the GitHub token lets this action correctly
-          # determine the unique run id necessary to re-run the checks
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          # DEBUG: 'cypress:server:args'
 
-      - name: Sleep for 3 minutes
-        run: sleep 180s
-        shell: bash
+          
       - name: 'Generate report'
         if: success() || failure()
         run: yarn cy:report
@@ -73,35 +63,36 @@ jobs:
         if: always()
         uses: actions/upload-artifact@v3
         with:
-          name: cypress-report
+          name: cypress-report-${{ matrix.containers }}
           path: cypress/cucumber-html-report
 
-  # generate-report:
-  #   needs: [ui-chrome-tests]
-  #   if: success()
-  #   runs-on: ubuntu-latest
+  merge-reports:
+    needs: ui-chrome-tests
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
 
-  #   steps:
-  #     - name: Dowload artifacts
-  #       uses: actions/download-artifact@v3.0.1
-  #       with:
-  #         name: ReportsData
-  #         path: cypress/cucumber-html-report/
+      - name: Download reports from all containers
+        uses: actions/download-artifact@v3
+        with:
+          name: cypress-report-*
+          path: cypress/cucumber-html-report/
+      
+      # Here you can add a custom script to merge the reports
+      - name: Merge Cucumber Reports
+        run: |
+          mkdir -p cypress/merged-report
+          yarn merge-cucumber-reports -i cypress/cucumber-html-report -o cypress/merged-report/cucumber-report.json
 
-  #     - name: Upload report
-  #       if: always()
-  #       uses: actions/upload-artifact@v3
-  #       with:
-  #         name: cypress-report
-  #         path: cypress/cucumber-html-report
-  #       env:
-  #         CYPRESS_RECORD_KEY: ${{ secrets.CYPRESS_RECORD_KEY }}
-  #         # Recommended: pass the GitHub token lets this action correctly
-  #         # determine the unique run id necessary to re-run the checks
-  #         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Upload merged report
+        uses: actions/upload-artifact@v3
+        with:
+          name: merged-cypress-report
+          path: cypress/merged-report/
 
   deploy-reports:
-    needs: [ui-chrome-tests]
+    needs: [merge-reports]
     if: always()
     runs-on: ubuntu-latest
 
@@ -110,17 +101,20 @@ jobs:
       pages: write
 
     steps:
-      - name: Dowload artifacts
-        uses: actions/download-artifact@v3.0.1
+      - name: Download merged report
+        uses: actions/download-artifact@v3
         with:
-          name: cypress-report
-          path: cypress/cucumber-html-report/
+          name: merged-cypress-report
+          path: cypress/merged-report/
+      
       - name: Setup Github report page
         uses: actions/configure-pages@v5.0.0
+      
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3.0.1
         with:
-          path: cypress/cucumber-html-report/
+          path: cypress/merged-report/
+      
       - name: Deploy to Github Pages
         id: deployment
         uses: actions/deploy-pages@v4.0.5
