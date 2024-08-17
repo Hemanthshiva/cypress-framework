@@ -1,3 +1,4 @@
+@api
 Feature: Api Tests
 
     Feature Description : Api Tests for the application

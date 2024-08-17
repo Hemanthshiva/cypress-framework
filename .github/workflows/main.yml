@@ -58,16 +58,12 @@ jobs:
         run: sleep 30s
         shell: bash
       
-      - name: 'Generate report'
-        if: success() || failure()
-        run: yarn cy:report
-
       - name: 'Upload report'
         if: always()
         uses: echapmanFromBunnings/upload-artifact@3.0.0
         with:
           name: cypress-report-${{ matrix.containers }}
-          path: cypress/cucumber-html-report
+          path: cypress/cucumber-json/
 
   merge-reports:
     needs: ui-chrome-tests
@@ -81,22 +77,22 @@ jobs:
         uses: aochmann/actions-download-artifact@1.0.4
         with:
           name: cypress-report-*
-          path: cypress/cucumber-html-report/
+          path: cypress/merged-json/
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       
       # Ensure the directory exists before running the merge
       - name: Ensure Report Directory Exists
-        run: mkdir -p cypress/merged-report
+        run: mkdir -p cypress/cucumber-report
 
       # Here you can add a custom script to merge the reports
       - name: Merge Cucumber Reports
         run: |
-          yarn merge-cucumber-reports -i cypress/cucumber-html-report -o cypress/merged-report/cucumber-report.json
+          yarn merge-cucumber-reports -i cypress/cucumber-html-report -o cypress/cucumber-report/cucumber-report.json
 
       - name: Check if the merged report was generated
         run: |
-          if [ -f cypress/merged-report/cucumber-report.json ]; then
+          if [ -f cypress/cucumber-report/cucumber-report.json ]; then
             echo "Merged report exists."
           else
             echo "Merged report not found!"
@@ -107,7 +103,7 @@ jobs:
         uses: echapmanFromBunnings/upload-artifact@3.0.0
         with:
           name: merged-cypress-report
-          path: cypress/merged-report/
+          path: cypress/cucumber-report/
 
   deploy-reports:
     needs: [merge-reports]
@@ -123,7 +119,7 @@ jobs:
         uses: aochmann/actions-download-artifact@1.0.4
         with:
           name: merged-cypress-report
-          path: cypress/merged-report/
+          path: cypress/cucumber-report/
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       
@@ -133,7 +129,7 @@ jobs:
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3.0.1
         with:
-          path: cypress/merged-report/
+          path: cypress/cucumber-report/
       
       - name: Deploy to Github Pages
         id: deployment

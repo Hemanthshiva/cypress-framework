@@ -8,10 +8,9 @@
     "cy:run:on:chrome": "cypress run --headed --browser chrome",
     "cy:run:on:edge": "cypress run --headed --browser edge",
     "cy:run:headless": "cypress run",
-    "cy:run:with:test:tag": "cypress run --spec cypress/e2e/cucumber-tests/featureFiles/*.feature --headed --browser chrome --env TAGS=@test",
+    "cy:run:with:test:tag": "cypress run --spec cypress/e2e/cucumber-tests/featureFiles/*.feature --headed --browser chrome --env TAGS=@api",
     "cy:report": "node ./cypress/report.ts",
     "cy:parallel": "cypress-parallel -s cy:run:on:chrome -d cypress/e2e/cucumber-tests/featureFiles/*.feature"
-
   },
   "author": "Hemanth Shivashankarappa",
   "license": "ISC",
@@ -30,6 +29,7 @@
     "@cypress/browserify-preprocessor": "^3.0.2",
     "cypress-mochawesome-reporter": "^3.8.2",
     "cypress-parallel": "^0.14.0",
+    "fs-extra": "^11.2.0",
     "npx": "^3.0.0",
     "tsify": "^5.0.4",
     "typescript": "^5.4.5"
