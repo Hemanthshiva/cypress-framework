@@ -60,7 +60,7 @@ jobs:
       
       - name: 'Upload report'
         if: always()
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: cypress-report-${{ matrix.containers }}
           path: cypress/cucumber-json/
@@ -78,14 +78,13 @@ jobs:
         run: mkdir -p cypress/json-reports
 
       - name: Download reports from all containers
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
         with:
-          name: cypress-report-*
           path: cypress/json-reports
               
      
       - name: Upload merged report
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: merged-cypress-report
           path: cypress/json-reports/
