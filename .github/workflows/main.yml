@@ -100,7 +100,7 @@ jobs:
 
   deploy-reports:
     needs: [ui-chrome-tests]
-    if: success()
+    if: always()
     runs-on: ubuntu-latest
 
     permissions:
