@@ -102,6 +102,11 @@ jobs:
     needs: [ui-chrome-tests]
     if: success()
     runs-on: ubuntu-latest
+
+    permissions:
+      id-token: write
+      pages: write
+
     steps:
       - name: Dowload artifacts
         uses: actions/download-artifact@v3.0.1
@@ -117,3 +122,5 @@ jobs:
       - name: Deploy to Github Pages
         id: deployment
         uses: actions/deploy-pages@v4.0.5
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
