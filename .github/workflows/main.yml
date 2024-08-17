@@ -62,6 +62,9 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           # DEBUG: 'cypress:server:args'
 
+      - name: Sleep for 3 minutes
+        run: sleep 180s
+        shell: bash
       - name: 'Generate report'
         if: success() || failure()
         run: yarn cy:report
