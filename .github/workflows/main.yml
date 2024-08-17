@@ -54,7 +54,10 @@ jobs:
           CYPRESS_RECORD_KEY: ${{ secrets.CYPRESS_RECORD_KEY }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-          
+      - name: Sleep for 30 seconds
+        run: sleep 30s
+        shell: bash
+      
       - name: 'Generate report'
         if: success() || failure()
         run: yarn cy:report
@@ -79,11 +82,23 @@ jobs:
           name: cypress-report-*
           path: cypress/cucumber-html-report/
       
+      # Ensure the directory exists before running the merge
+      - name: Ensure Report Directory Exists
+        run: mkdir -p cypress/merged-report
+
       # Here you can add a custom script to merge the reports
       - name: Merge Cucumber Reports
         run: |
-          mkdir -p cypress/merged-report
           yarn merge-cucumber-reports -i cypress/cucumber-html-report -o cypress/merged-report/cucumber-report.json
+
+      - name: Check if the merged report was generated
+        run: |
+          if [ -f cypress/merged-report/cucumber-report.json ]; then
+            echo "Merged report exists."
+          else
+            echo "Merged report not found!"
+            exit 1
+          fi
 
       - name: Upload merged report
         uses: actions/upload-artifact@v3
