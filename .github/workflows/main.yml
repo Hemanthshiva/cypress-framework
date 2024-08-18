@@ -69,6 +69,10 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
+      - name: Install depedencies
+        if: always()
+        run: yarn
+
       # Ensure the directory exists before running the merge
       - name: Ensure Report Directory Exists
         run: mkdir -p cypress/cucumber-json
