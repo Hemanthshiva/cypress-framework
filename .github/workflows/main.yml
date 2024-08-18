@@ -134,14 +134,13 @@ jobs:
           allure_history: cucumber-history
           keep_reports: 20
 
+      - name: Setup Github report page
+        uses: actions/configure-pages@v5.0.0
 
-      # - name: Setup Github report page
-      #   uses: actions/configure-pages@v5.0.0
-
-      # - name: Upload artifact
-      #   uses: actions/upload-pages-artifact@v3.0.1
-      #   with:
-      #     path: cypress/cucumber-html-report/
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v3.0.1
+        with:
+          path: cypress/cucumber-html-report/
 
       - name: Deploy to Github Pages
         id: deployment
