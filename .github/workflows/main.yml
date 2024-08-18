@@ -143,17 +143,18 @@ jobs:
       #   with:
       #     path: cypress/cucumber-html-report/
 
-      # - name: Deploy to Github Pages
-      #   id: deployment
-      #   uses: actions/deploy-pages@v4.0.5
-      #   env:
-      #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Deploy report to Github Pages
-        if: always()
-        uses: peaceiris/actions-gh-pages@v2
+      - name: Deploy to Github Pages
+        id: deployment
+        uses: actions/deploy-pages@v4.0.5
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          PERSONAL_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           PUBLISH_BRANCH: gh-pages
           PUBLISH_DIR: cucumber-history
+
+      # - name: Deploy report to Github Pages
+      #   if: always()
+      #   uses: peaceiris/actions-gh-pages@v2
+      #   env:
+      #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      #     PERSONAL_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          
