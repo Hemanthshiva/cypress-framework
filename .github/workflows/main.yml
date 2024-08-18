@@ -111,21 +111,21 @@ jobs:
 
     steps:
       - name: Download merged report
-        uses: actions/download-artifact@v4
+        uses: aochmann/actions-download-artifact@1.0.4
         with:
           name: cucumber-html-report
-          path: cypress/
+          path: cypress/cucumber-html-report/
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      
+
       - name: Setup Github report page
         uses: actions/configure-pages@v5.0.0
-      
+
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3.0.1
         with:
           path: cypress/cucumber-html-report/
-      
+
       - name: Deploy to Github Pages
         id: deployment
         uses: actions/deploy-pages@v4.0.5
