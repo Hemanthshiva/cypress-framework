@@ -31,7 +31,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        containers: [1, 2, 3]
+        containers: [1, 2]
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -123,8 +123,8 @@ jobs:
         if: always()
         continue-on-error: true
         with:
-            ref: gh-pages
-            path: gh-pages
+          ref: gh-pages
+          path: gh-pages
 
       - name: Report action from marketplace
         uses: simple-elf/allure-report-action@master
@@ -150,10 +150,11 @@ jobs:
           PUBLISH_BRANCH: gh-pages
           PUBLISH_DIR: cucumber-history
 
-      # - name: Deploy report to Github Pages
-      #   if: always()
-      #   uses: peaceiris/actions-gh-pages@v2
-      #   env:
-      #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      #     PERSONAL_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          
+      - name: Post the link to the report
+        if: always()
+        uses: Sibz/github-status-action@v1
+        with:
+          authToken: ${{secrets.GITHUB_TOKEN}}
+          context: 'Test report'
+          state: 'success'
+          target_url: hemanthshiva.github.io/github-cucumber-report/-${{ github.run_number }}
