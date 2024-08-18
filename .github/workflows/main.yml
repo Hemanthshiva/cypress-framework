@@ -131,4 +131,4 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Generate Report URL and Display
-        run: echo "Report URL: https://<YOUR_GITHUB_USERNAME>.github.io/<YOUR_REPO_NAME>/test-report-${{ github.run_number }}/index.html"
+        run: echo `Report URL\:\ https://hemanthshiva.github.io/cypress-framework/test-report-${{ github.run_number }}/index.html`
