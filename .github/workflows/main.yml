@@ -16,7 +16,7 @@ jobs:
         uses: cypress-io/github-action@v6.5.0
         with:
           runTests: false
-      # report machine parameters
+
       - run: yarn cypress info
       - run: node --version
       - run: node -p 'os.cpus()'
@@ -61,7 +61,7 @@ jobs:
           name: cypress-report-${{ matrix.containers }}
           path: cypress/cucumber-json/
 
-  genarate-test-report:
+  generate-test-report:
     needs: ui-chrome-tests
     if: success() || failure()
     runs-on: ubuntu-latest
@@ -69,11 +69,10 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Install depedencies
+      - name: Install dependencies
         if: always()
         run: yarn
 
-      # Ensure the directory exists before running the merge
       - name: Ensure Report Directory Exists
         run: mkdir -p cypress/cucumber-json
 
@@ -82,7 +81,6 @@ jobs:
         with:
           path: cypress/json-reports
 
-      # Copy all JSON files to the cypress/cucumber-json directory
       - name: Copy JSON files to the cucumber-json folder
         run: |
           find cypress/json-reports -type f -name "*.json" -exec cp {} cypress/cucumber-json/ \;
@@ -101,7 +99,7 @@ jobs:
           path: cypress/cucumber-html-report/
 
   deploy-reports:
-    needs: [genarate-test-report]
+    needs: [generate-test-report]
     if: always()
     runs-on: ubuntu-latest
 
@@ -118,23 +116,7 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Get report history
-        uses: actions/checkout@v2
-        if: always()
-        continue-on-error: true
-        with:
-          ref: gh-pages
-          path: gh-pages
-
-      - name: Report action from marketplace
-        uses: simple-elf/allure-report-action@master
-        if: always()
-        with:
-          allure_results: cucumber-results
-          allure_history: cucumber-history
-          keep_reports: 20
-
-      - name: Setup Github report page
+      - name: Setup Github Pages
         uses: actions/configure-pages@v5.0.0
 
       - name: Upload artifact
@@ -147,5 +129,6 @@ jobs:
         uses: actions/deploy-pages@v4.0.5
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          PUBLISH_BRANCH: gh-pages
-          PUBLISH_DIR: cucumber-history
+
+      - name: Generate Report URL and Display
+        run: echo "Report URL: https://<YOUR_GITHUB_USERNAME>.github.io/<YOUR_REPO_NAME>/test-report-${{ github.run_number }}/index.html"
