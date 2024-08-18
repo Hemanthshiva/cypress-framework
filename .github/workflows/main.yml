@@ -61,7 +61,7 @@ jobs:
           name: cypress-report-${{ matrix.containers }}
           path: cypress/cucumber-json/
 
-  download-reports:
+  genarate-test-report:
     needs: ui-chrome-tests
     if: success() || failure()
     runs-on: ubuntu-latest
@@ -86,41 +86,44 @@ jobs:
       - name: List Files in the cucumber-json folder
         run: ls -R cypress/cucumber-json/
 
-     
-      # - name: Upload merged report
-      #   uses: actions/upload-artifact@v4
-      #   with:
-      #     name: merged-cypress-report
-      #     path: cypress/json-reports/
+      - name: 'Generate report'
+        if: always()
+        run: yarn cy:report
 
-  # deploy-reports:
-  #   needs: [download-reports]
-  #   if: always()
-  #   runs-on: ubuntu-latest
+      - name: Upload merged report
+        uses: actions/upload-artifact@v4
+        with:
+          name: cucumber-html-report
+          path: cypress/cucumber-html-report/
 
-  #   permissions:
-  #     id-token: write
-  #     pages: write
+  deploy-reports:
+    needs: [genarate-test-report]
+    if: always()
+    runs-on: ubuntu-latest
 
-  #   steps:
-  #     - name: Download merged report
-  #       uses: aochmann/actions-download-artifact@1.0.4
-  #       with:
-  #         name: merged-cypress-report
-  #         path: cypress/cucumber-report/
-  #       env:
-  #         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    permissions:
+      id-token: write
+      pages: write
+
+    steps:
+      - name: Download merged report
+        uses: actions/download-artifact@v4
+        with:
+          name: cucumber-html-report
+          path: cypress/
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       
-  #     - name: Setup Github report page
-  #       uses: actions/configure-pages@v5.0.0
+      - name: Setup Github report page
+        uses: actions/configure-pages@v5.0.0
       
-  #     - name: Upload artifact
-  #       uses: actions/upload-pages-artifact@v3.0.1
-  #       with:
-  #         path: cypress/cucumber-report/
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v3.0.1
+        with:
+          path: cypress/cucumber-html-report/
       
-  #     - name: Deploy to Github Pages
-  #       id: deployment
-  #       uses: actions/deploy-pages@v4.0.5
-  #       env:
-  #         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Deploy to Github Pages
+        id: deployment
+        uses: actions/deploy-pages@v4.0.5
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
