@@ -110,6 +110,24 @@ jobs:
       pages: write
 
     steps:
+      # - name: Get Cucumber report history
+      #   uses: actions/checkout@v2
+      #   if: always()
+      #   continue-on-error: true
+      #   with:
+      #     ref: gh-pages
+      #     path: gh-pages
+
+      # - name: Test marketplace action
+      #   uses: simple-elf/allure-report-action@master
+      #   if: always()
+      #   id: cucumber-report
+      #   with:
+      #     allure_results: cypress/cucumber-html-report
+      #     gh_pages: gh-pages
+      #     allure_report: cucumber-report
+      #     allure_history: cucumber-history
+
       - name: Download merged report
         uses: actions/download-artifact@v4
         with:
@@ -126,8 +144,26 @@ jobs:
         with:
           path: cypress/cucumber-html-report/
 
-      - name: Deploy to Github Pages
-        id: deployment
-        uses: actions/deploy-pages@v4.0.5
+      # - name: Deploy to Github Pages
+      #   id: deployment
+      #   uses: actions/deploy-pages@v4.0.5
+      #   env:
+      #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Deploy report to Github Pages
+        if: always()
+        uses: peaceiris/actions-gh-pages@v2
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          PERSONAL_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          PUBLISH_BRANCH: gh-pages
+
+
+      - name: Post the link to the report
+        if: always()
+        uses: Sibz/github-status-action@v1
+        with: 
+            authToken: ${{secrets.GITHUB_TOKEN}}
+            context: 'Test report'
+            state: 'success'
+            sha: ${{ github.event.pull_request.head.sha }}
+            target_url: simple-elf.github.io/github-allure-history/${{ github.run_number }}
